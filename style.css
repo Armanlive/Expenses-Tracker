@@ -1,34 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 * {
-  margin: 0px;
-  padding: 0px;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif; /* Reverted font-family for general elements */
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
   background-color: #78c1f3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-    /* Removed font-family and font-size from body */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align items to the top */
+  min-height: 100vh; /* Use min-height */
+  padding: 10px; /* Add padding around body content */
+  overflow-y: auto; /* Allow body to scroll */
+  /* Removed: height: 100vh; overflow: hidden; */
 }
+
 .container {
- background-color: #fff;
- padding: 20px;
-  width: 400px; /* Keep the container width */
+  background-color: #fff;
+  padding: 20px;
+  max-width: 400px; /* Max width on larger screens */
+  width: 95%; /* Percentage width for responsiveness */
   border-radius: 8px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  /* Add overflow-x to handle potential horizontal overflow */
-  overflow-x: auto;
+  /* Removed fixed height/overflow constraints from container */
+  /* overflow-x: auto; */ /* Removed horizontal overflow from container */
+  /* max-height: 95vh; */
+  /* overflow-y: auto; */
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 h2 {
   text-align: center;
   margin-bottom: 10px;
-  font-size: 1.5rem; /* Reverted font size */
+  font-size: 1.5rem;
 }
 
 .balance {
@@ -36,18 +43,28 @@ h2 {
   background: #0095dd;
   color: #f6f8fa;
   border-radius: 8px;
-  padding-top: 5px;
+  padding: 10px 0; /* Added vertical padding */
+  margin-bottom: 20px; /* Space below balance block */
 }
 
-.balance h1{
+.balance h3 { /* Your Balance heading */
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    margin-top: 0; /* Ensure no top margin */
+}
+
+.balance h1{ /* ₹400 */
  margin: 0px;
- font-size: 2.5rem; /* Reverted font size */
+ font-size: 2.5rem;
+ margin-bottom: 10px;
 }
 
 .incomeExpense {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0px;
+  margin: 0 0 10px 0; /* Adjusted margin */
+  padding: 10px 0; /* Added padding */
+  border-top: 1px solid rgba(255,255,255,0.2); /* Separator */
 }
 
 .income,
@@ -55,438 +72,308 @@ h2 {
     flex: 1;
     text-align: center;
 }
+.income h3, .expense h3 { /* Income / Expense headings */
+    margin-bottom: 3px;
+    font-size: 1rem;
+    margin-top: 0; /* Ensure no top margin */
+}
 
-.money {
-  font-size: 1.5rem; /* Reverted font size */
+
+.money { /* ₹+500 / ₹-100 */
+  font-size: 1.5rem;
   margin: 5px 0px;
 }
 
-.Plus {
-    color: #20cc71;
-    font-weight: bold;
+h3 { /* General h3 styling (Transaction History, Add New Transaction) */
+    margin-bottom: 10px;
+    margin-top: 20px;
+    font-size: 1.2rem;
 }
 
-.Minus {
-    color: #C0392B;
-    font-weight: bold;
-}
 
-/* Removed or adjusted styles for the old list */
-/*
-.list {
-  list-style: none;
-  padding: 0px;
-  max-height: 120px;
-  overflow-y: auto;
-}
-
-.list li {
-    background-color: #f6f8fa;
-    margin: 10px 0px;
-    padding: 10px;
-    border-right: 5px solid;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-*/
-
-/* New styles for the transaction table */
+/* --- Transaction Table Styles --- */
 .transaction-table {
-    width: 100%; /* Make the table take full width of its container */
-    border-collapse: collapse; /* Collapse borders */
-    margin-bottom: 20px; /* Add some space below the table */
-    table-layout: fixed; /* Fix table layout to prevent columns from adjusting based on content */
-    border: 1px solid #333; /* Added light black border to the table */
-    font-family: "Trebuchet MS", sans-serif; /* Set font family for the table */
-    font-size: 9pt; /* Set font size for the table */
-    /* Add max height and scroll for the table body */
-    max-height: 150px; /* Adjust this value as needed to fit your desired number of rows */
-    overflow-y: auto; /* Add vertical scrollbar when content exceeds max-height */
-    display: block; /* Needed for max-height and overflow to work on a table */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px; /* Space below table */
+    table-layout: fixed;
+    border: 1px solid #333;
+    font-family: "Trebuchet MS", sans-serif;
+    font-size: 9pt;
 }
 
 .transaction-table th,
 .transaction-table td {
-    padding: 8px; /* Add padding to cells */
-    text-align: left; /* Align text to the left */
-    border-bottom: 1px solid #ddd; /* Add a bottom border to cells */
-    /* word-wrap: break-word; /* Break long words to prevent overflow */ /* Removed from th */
-    font-size: 1em; /* Ensure table cell text is based on the table font size */
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
 }
 
-/* Add display: block to tbody to make overflow work */
+.transaction-table thead th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    border-bottom: 1px solid #333;
+}
+
+
 .transaction-table tbody {
     display: block;
-    max-height: calc(150px - 35px); /* Adjust max-height for tbody, subtracting the estimated header height */
-    overflow-y: auto; /* Add scrollbar to tbody */
-    width: 100%; /* Ensure tbody takes full width */
+    max-height: 150px; /* Keep a max height for the tbody scroll */
+    overflow-y: auto;
+    width: 100%;
 }
 
-/* Ensure table header aligns with tbody columns when tbody has scrollbar */
 .transaction-table thead tr {
-    display: table; /* Make thead behave like a table */
-    width: 100%; /* Ensure thead takes full width */
-    table-layout: fixed; /* Match the table layout */
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
-
 
 .transaction-table td {
-    word-wrap: break-word; /* Keep on td */
-}
-
-.transaction-table th {
-    background-color: #f2f2f2; /* Light grey background for headers */
-    font-weight: bold;
-    white-space: nowrap; /* Prevent text wrapping in headers */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-    font-size: 1em; /* Ensure table header text is based on the table font size */
+    word-wrap: break-word;
 }
 
 
-.transaction-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* Alternate row background color */
-}
+.transaction-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+.transaction-table tbody tr:hover { background-color: #e9e9e9; }
 
-.transaction-table tbody tr:hover {
-    background-color: #e9e9e9; /* Highlight row on hover */
-}
-
-/* Style for the "No Transactions" message row */
 .transaction-table tbody tr td[colspan="5"] {
-    text-align: center; /* Center the text */
+    text-align: center;
     font-style: italic;
     color: #888;
-    font-size: 1em; /* Ensure "No Transactions" text is based on the table font size */
-}
-
-/* Adjust column widths */
-.transaction-table th:nth-child(1),
-.transaction-table td:nth-child(1) {
-    width: 20%; /* Date column - Adjusted width */
-}
-
-.transaction-table th:nth-child(2),
-.transaction-table td:nth-child(2) {
-    width: 25%; /* Description column - Kept same width */
-}
-
-.transaction-table th:nth-child(3),
-.transaction-table td:nth-child(3) {
-    width: 20%; /* Income column - Kept same width */
-    color: #20cc71; /* Green for income */
-    text-align: right; /* Align income to the right */
-}
-
-.transaction-table th:nth-child(4),
-.transaction-table td:nth-child(4) {
-    width: 25%; /* Expenses column - Increased width */
-    color: #C0392B; /* Red for expense */
-    text-align: right; /* Align expenses to the right */
-}
-
-.transaction-table th:nth-child(5),
-.transaction-table td:nth-child(5) {
-    width: 10%; /* Action column - Kept same width */
-    text-align: center; /* Center the delete button */
-    /* Ensure no text is forced by CSS */
-    content: ""; /* Added to ensure no generated content */
-}
-
-/* New styles for coloring entire rows */
-.transaction-table tbody tr.income-row {
-    color: #20cc71; /* Green color for income rows */
-}
-
-.transaction-table tbody tr.expense-row {
-    color: #C0392B; /* Red color for expense rows */
+    font-size: 1em;
 }
 
 
+/* --- Form Styles --- */
 .formcontrol {
-    margin-bottom: 8px; /* Reduced margin bottom */
+    margin-bottom: 8px;
 }
 
 .formcontrol label {
     display: block;
-    margin-bottom: 3px; /* Reduced margin bottom */
-    font-size: 0.9rem; /* Reverted font size */
+    margin-bottom: 3px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
 }
 
 .formcontrol input {
     width: 100%;
-    padding: 6px; /* Reduced padding */
+    padding: 8px 6px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 0.9rem; /* Reverted font size */
+    font-size: 0.9rem;
 }
 
 .btn {
-    /* Removed width: 100%; from the general .btn rule */
     padding: 10px;
-    background-color: #0095dd; /* Default color, will be overridden by specific classes */
+    background-color: #0095dd;
     color: #fff;
     border: none;
     cursor: pointer;
-    font-size: 1rem; /* Reverted font size */
+    font-size: 1rem;
     border-radius: 4px;
-    margin-top: 10px;
-    transition: background-color 0.3s ease
+    transition: background-color 0.3s ease;
+    width: 100%;
 }
 
 .btn:hover {
-    background-color: #007bb5; /* Default hover color */
+    background-color: #007bb5;
 }
 
-/* New styles for the button container to make them side-by-side */
 .button-container {
-    display: flex; /* Use flexbox */
-    gap: 8px; /* Reduced gap between buttons */
-    margin-top: 8px; /* Reduced margin top */
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 .button-container .btn {
     flex: 1;
     margin-top: 0;
-    padding: 8px; /* Reduced button padding */
-    font-size: 0.9rem; /* Reduced font size for button text */
+    padding: 10px;
+    font-size: 1rem;
+    width: auto;
+    min-width: 120px;
 }
 
 
-/* Specific styles for income and expense buttons */
-.income-btn {
-    background-color: darkgreen;
-}
-
-.income-btn:hover {
-    background-color: #006400; /* Darker green on hover */
-}
-
-.expense-btn {
-    background-color: red;
-}
-
-.expense-btn:hover {
-    background-color: #cc0000; /* Darker red on hover */
-}
+.income-btn { background-color: darkgreen; }
+.income-btn:hover { background-color: #006400; }
+.expense-btn { background-color: red; }
+.expense-btn:hover { background-color: #cc0000; }
 
 
-.delete-btn { /* Changed from .delete to .delete-btn to match the button class */
-    width: 20px; /* Adjusted width */
-    height: 20px; /* Adjusted height */
+.delete-btn {
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     background: none;
     border: none;
     padding: 0;
-    font-size: 1em; /* Keep relative to table font size */
-    color: red; /* Ensure the color is red */
-    display: flex; /* Use flexbox to center icon */
+    font-size: 1em;
+    color: red;
+    display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
+.delete-btn:hover { opacity: 1; }
 
-/* Removed or adjusted styles for the old list items */
-/*
-.list li.plus {
-    border-right-color: #20cc71;
- color: #20cc71;
-}
-
-.list li.minus {
-    border-right-color: #C0392B;
- color: #C0392B;
-}
-
-.list li span.plus {
-    color: #20cc71;
-}
-
-.list li span.minus {
-    color: #C0392B;
-    margin-left: auto;
-}
-*/
-
-/* Style for the chart container */
-.chart-container {
-    margin-bottom: 20px; /* Add some space below the chart */
-    flex: 1; /* Allow chart container to grow */
-    min-width: 0; /* Prevent flex item from overflowing */
-}
-
-/* New styles to arrange form and chart side-by-side */
-.form-chart-container {
-    display: flex; /* Use flexbox */
-    justify-content: space-between; /* Distribute space between items */
-    gap: 20px; /* Add space between the chart and the form */
-    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-    margin-bottom: 20px; /* Add space below this section */
-}
-
-.form-chart-container form {
-    flex: 1; /* Allow form to grow */
-    min-width: 250px; /* Minimum width for the form before wrapping */
-}
-
-/* Adjust the h3 above the form if needed, or remove it */
-.form-chart-container h3 {
-    width: 100%; /* Make the heading take full width */
-    text-align: center; /* Center the heading */
-    margin-bottom: 10px;
-}
 
 /* --- Responsive Design --- */
 
-/* Styles for screens smaller than 768px (typical tablet breakpoint) */
+/* Tablet breakpoint */
 @media (max-width: 768px) {
     .container {
-        width: 95%; /* Make container take more width on smaller screens */
-        padding: 15px; /* Reduce padding */
+        width: 95%;
+        padding: 15px;
+        margin: 10px auto;
     }
 
-    h2 {
-        font-size: 1.3rem; /* Slightly smaller heading */
-    }
+    h2 { font-size: 1.4rem; }
+    .balance h1 { font-size: 2.2rem; }
+    .balance h3 { font-size: 1.1rem; }
+    .money { font-size: 1.3rem; }
+    .income h3, .expense h3 { font-size: 1.05rem; }
 
-    .balance h1 {
-        font-size: 2rem; /* Slightly smaller balance font */
-    }
+     h3 {
+         margin-top: 15px;
+         margin-bottom: 8px;
+         font-size: 1.1rem;
+     }
 
-    .money {
-        font-size: 1.2rem; /* Slightly smaller income/expense font */
-    }
-
-    /* Stack the form and chart vertically on smaller screens */
-    .form-chart-container {
-        flex-direction: column;
-        gap: 15px; /* Adjust gap when stacked */
-    }
-
-    .form-chart-container form,
-    .chart-container {
-        flex: unset; /* Remove flex grow */
-        width: 100%; /* Make them take full width */
-        min-width: unset; /* Remove min-width constraint */
-    }
-
-    /* Adjust table font size for smaller screens */
     .transaction-table {
         font-size: 8pt;
+        margin-bottom: 12px;
     }
 
-    .transaction-table th,
-    .transaction-table td {
-        padding: 6px; /* Reduce cell padding */
-    }
+    .transaction-table th, .transaction-table td { padding: 6px; }
 
-    /* Adjust column widths for smaller screens if necessary */
-    .transaction-table th:nth-child(1),
-    .transaction-table td:nth-child(1) {
-        width: 20%; /* Date */
-    }
+    /* Tablet column widths */
+    .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 20%; }
+    .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 30%; }
+    .transaction-table th:nth-child(3), .transaction-table td:nth-child(3) { width: 20%; }
+    .transaction-table th:nth-child(4), .transaction-table td:nth-child(4) { width: 20%; }
+    .transaction-table th:nth-child(5), .transaction-table td:nth-child(5) { width: 10%; }
 
-    .transaction-table th:nth-child(2),
-    .transaction-table td:nth-child(2) {
-        width: 30%; /* Description - Give more space */
-    }
-
-    .transaction-table th:nth-child(3),
-    .transaction-table td:nth-child(3) {
-        width: 20%; /* Income */
-    }
-
-    .transaction-table th:nth-child(4),
-    .transaction-table td:nth-child(4) {
-        width: 20%; /* Expenses */
-    }
-
-    .transaction-table th:nth-child(5),
-    .transaction-table td:nth-child(5) {
-        width: 10%; /* Action */
-    }
+    .button-container { gap: 10px; margin-top: 8px; }
+    .button-container .btn { padding: 10px; font-size: 1rem; }
+    .formcontrol { margin-bottom: 6px; }
+    .formcontrol label { margin-bottom: 2px; }
 }
 
-/* Styles for screens smaller than 480px (typical mobile breakpoint) */
+/* Mobile breakpoint */
 @media (max-width: 480px) {
+    body {
+        padding: 5px; /* Reduced padding */
+        align-items: stretch;
+    }
     .container {
-        width: 100%; /* Full width on very small screens */
-        padding: 10px; /* Further reduce padding */
-        border-radius: 0; /* Remove border-radius */
-        box-shadow: none; /* Remove box-shadow */
+        width: 100%;
+        padding: 8px; /* Reduced container padding */
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0 auto; /* Center container */
     }
 
-    h2 {
-        font-size: 1.2rem;
+    /* --- Aggressive Space & Font Reduction for Mobile --- */
+
+    h2 { /* Expense Tracker heading */
+        font-size: 1.1rem; /* Reduced font size */
+        margin-top: 5px; /* Reduced top space */
+        margin-bottom: 5px; /* Reduced bottom space */
     }
 
-    .balance h1 {
-        font-size: 2rem;
+    .balance {
+        padding: 6px 0; /* Reduced vertical padding */
+        margin-top: 5px; /* Reduced top space */
+        margin-bottom: 10px; /* Reduced bottom space */
     }
 
-    .money {
-        font-size: 1.1rem;
+    .balance h3 { /* Your Balance heading */
+        font-size: 0.9rem; /* Reduced font size */
+        margin-top: 0; /* Ensure no top margin */
+        margin-bottom: 3px; /* Reduced bottom margin */
+    }
+
+    .balance h1 { /* ₹400 */
+        font-size: 1.6rem; /* Reduced font size */
+        margin-bottom: 6px; /* Reduced bottom margin */
     }
 
     .incomeExpense {
-        flex-direction: column; /* Stack income/expense vertically */
-        gap: 10px;
+        flex-direction: column;
+        gap: 6px; /* Reduced gap */
+        margin: 0 0 6px 0; /* Reduced bottom margin */
+        padding: 6px 0; /* Reduced padding */
+    }
+    .income, .expense { padding: 3px 0; } /* Reduced padding */
+
+    .income h3, .expense h3 { /* Income / Expense headings */
+        font-size: 0.9rem; /* Reduced font size */
+        margin-top: 0; /* Ensure no top margin */
+        margin-bottom: 2px; /* Reduced bottom margin */
     }
 
-    .income,
-    .expense {
-        padding: 5px 0;
-        border-bottom: 1px solid #eee; /* Add separator */
+    .money { /* ₹+500 / ₹-100 */
+        font-size: 1rem; /* Reduced font size */
+        margin: 2px 0px; /* Reduced vertical margin */
     }
 
-    .income:last-child,
-    .expense:last-child {
-        border-bottom: none;
+
+    h3 { /* Transaction History, Add New Transaction headings */
+        margin-top: 10px; /* Reduced top space */
+        margin-bottom: 5px; /* Reduced bottom space */
+        font-size: 1rem; /* Reduced font size */
     }
 
-    /* Adjust table font size for mobile */
+
     .transaction-table {
-        font-size: 7pt;
+        font-size: 6pt; /* Further reduced table font size */
+        margin-bottom: 8px; /* Reduced space below table */
     }
 
      .transaction-table th,
     .transaction-table td {
-        padding: 4px; /* Further reduce cell padding */
+        padding: 3px; /* Reduced cell padding */
     }
 
-    /* Adjust column widths for mobile */
-    .transaction-table th:nth-child(1),
-    .transaction-table td:nth-child(1) {
-        width: 20%; /* Date */
-    }
+    /* Adjust column widths for mobile - slightly less than 100% */
+    .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 20%; }
+    .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 33%; }
+    .transaction-table th:nth-child(3), .transaction-table td:nth-child(3) { width: 18%; }
+    .transaction-table th:nth-child(4), .transaction-table td:nth-child(4) { width: 18%; }
+    .transaction-table th:nth-child(5), .transaction-table td:nth-child(5) { width: 9%; }
 
-    .transaction-table th:nth-child(2),
-    .transaction-table td:nth-child(2) {
-        width: 35%; /* Description - More space */
-    }
 
-    .transaction-table th:nth-child(3),
-    .transaction-table td:nth-child(3) {
-        width: 18%; /* Income */
-    }
+    /* Form Controls */
+    .formcontrol { margin-bottom: 4px; } /* Reduced space between form controls */
+    .formcontrol label { margin-bottom: 1px; font-size: 0.8rem; } /* Reduced space below labels & font size */
+    .formcontrol input { padding: 5px; font-size: 0.85rem; } /* Reduced input padding/font size */
 
-    .transaction-table th:nth-child(4),
-    .transaction-table td:nth-child(4) {
-        width: 18%; /* Expenses */
-    }
 
-    .transaction-table th:nth-child(5),
-    .transaction-table td:nth-child(5) {
-        width: 9%; /* Action */
-    }
-
+    /* Buttons */
     .button-container {
-        flex-direction: column; /* Stack buttons vertically */
-        gap: 5px;
+        flex-direction: column;
+        gap: 5px; /* Reduced gap */
+        margin-top: 5px; /* Reduced margin top */
     }
 
     .button-container .btn {
-        padding: 10px; /* Increase button padding */
-        font-size: 1rem; /* Increase button font size */
+        width: 100%;
+        flex: none;
+        min-width: unset;
+        padding: 6px; /* Reduced button padding */
+        font-size: 0.9rem; /* Reduced button font size */
+        text-align: center;
     }
 }
