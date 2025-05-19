@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 * {
-  margin: 0px;
-  padding: 0px;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
@@ -10,26 +10,23 @@ body {
   background-color: #78c1f3;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    align-items: flex-start; /* Align items to the top instead of center for better vertical flow */
+    min-height: 100vh; /* Use min-height so content dictates height */
+    padding: 10px; /* Add some padding around the body content */
+    overflow-y: auto; /* Allow body to scroll if container is larger than viewport */
 }
 
-/* --- Adjusted Container Width Handling --- */
 .container {
  background-color: #fff;
  padding: 20px;
-  /* CHANGE: Use max-width and a percentage width */
-  max-width: 400px; /* Maximum width on larger screens */
-  width: 95%; /* Takes 95% of viewport width, ensuring it shrinks on smaller screens */
+  max-width: 400px;
+  width: 95%;
   border-radius: 8px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  /* Keep overflow-x if your table content might exceed container width */
-  /* overflow-x: auto; */ /* Removed: let the table handle its own scroll if needed */
-  /* Add overflow-y if content might exceed screen height */
-  overflow-y: auto; /* Added: Allow vertical scrolling within the container */
-  max-height: 95vh; /* Added: Limit container height and enable scroll if needed */
-
+  overflow-y: auto;
+  max-height: 95vh; /* Limit container height */
+  margin-top: 10px; /* Add a small margin at the top */
+  margin-bottom: 10px; /* Add a small margin at the bottom */
 }
 
 h2 {
@@ -43,18 +40,26 @@ h2 {
   background: #0095dd;
   color: #f6f8fa;
   border-radius: 8px;
-  padding-top: 5px;
+  padding: 10px 0; /* Add some padding */
+  margin-bottom: 20px; /* Space below balance */
+}
+
+.balance h3 { /* Style the balance heading */
+    margin-bottom: 5px;
 }
 
 .balance h1{
  margin: 0px;
  font-size: 2.5rem;
+ margin-bottom: 10px; /* Space below the balance amount */
 }
 
 .incomeExpense {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0px;
+  margin: 0 0 10px 0; /* Adjusted margin */
+  padding: 10px 0; /* Added padding */
+  border-top: 1px solid rgba(255,255,255,0.2); /* Separator */
 }
 
 .income,
@@ -62,10 +67,15 @@ h2 {
     flex: 1;
     text-align: center;
 }
+.income h3, .expense h3 { /* Style income/expense headings */
+    margin-bottom: 3px;
+    font-size: 1rem;
+}
+
 
 .money {
   font-size: 1.5rem;
-  margin: 5px 0px;
+  margin: 5px 0px; /* Keep original margin */
 }
 
 .Plus {
@@ -78,17 +88,22 @@ h2 {
     font-weight: bold;
 }
 
+h3 { /* General h3 styling */
+    margin-bottom: 10px; /* Default space below h3 */
+    margin-top: 20px; /* Space above h3 */
+    font-size: 1.2rem;
+}
 
-/* --- Transaction Table Styles (Already seem responsive) --- */
+
+/* --- Transaction Table Styles --- */
 .transaction-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduced space below table */
     table-layout: fixed;
     border: 1px solid #333;
     font-family: "Trebuchet MS", sans-serif;
     font-size: 9pt;
-    /* Max height and scroll for the table body are handled below */
 }
 
 .transaction-table th,
@@ -99,10 +114,21 @@ h2 {
     font-size: 1em;
 }
 
+.transaction-table thead th { /* Style table header cells */
+    background-color: #f2f2f2;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    border-bottom: 1px solid #333; /* Stronger border below header */
+}
+
+
 .transaction-table tbody {
-    display: block; /* Needed for max-height and overflow */
+    display: block;
     max-height: 150px; /* Adjust as needed */
-    overflow-y: auto; /* Add scrollbar to tbody */
+    overflow-y: auto;
     width: 100%;
 }
 
@@ -116,14 +142,6 @@ h2 {
     word-wrap: break-word;
 }
 
-.transaction-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 1em;
-}
 
 .transaction-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
@@ -140,27 +158,23 @@ h2 {
     font-size: 1em;
 }
 
-/* Adjust column widths (These are already within media queries) */
-/* Moved column width adjustments into media queries for better control */
-/* Example below:
-.transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 20%; }
-... rest of columns ...
-*/
 
-/* --- Form Styles (Already seem mostly responsive) --- */
+/* --- Form Styles --- */
 .formcontrol {
-    margin-bottom: 8px;
+    margin-bottom: 8px; /* Keep small margin bottom */
 }
 
 .formcontrol label {
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 3px; /* Keep small margin bottom */
     font-size: 0.9rem;
+    font-weight: 500; /* Make labels slightly bolder */
+    color: #555;
 }
 
 .formcontrol input {
-    width: 100%; /* This is good for mobile, ensures input fills available width */
-    padding: 6px;
+    width: 100%;
+    padding: 8px 6px; /* Slightly more vertical padding */
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 0.9rem;
@@ -174,32 +188,28 @@ h2 {
     cursor: pointer;
     font-size: 1rem;
     border-radius: 4px;
-    margin-top: 10px; /* This margin-top might conflict with button-container margin/gap */
     transition: background-color 0.3s ease;
-    width: 100%; /* Added: Ensure buttons take full width by default */
+    width: 100%;
 }
 
 .btn:hover {
     background-color: #007bb5;
 }
 
-/* --- Adjusted Button Container Layout --- */
 .button-container {
-    display: flex; /* Use flexbox */
+    display: flex;
     gap: 8px;
-    margin-top: 8px;
-     /* Allow buttons to wrap on smaller screens */
-    flex-wrap: wrap; /* Added: This will stack buttons if they don't fit side-by-side */
+    margin-top: 10px; /* Keep a small margin above buttons */
+    flex-wrap: wrap;
 }
 
 .button-container .btn {
-    flex: 1; /* Allows buttons to grow/shrink */
-    margin-top: 0; /* Reset margin-top from generic .btn */
-    padding: 8px;
-    font-size: 0.9rem;
-    /* Remove width: 100% from here if flex: 1 is used, flex handles width */
-    width: auto; /* Reset width to allow flex to control it */
-    min-width: 120px; /* Optional: Give buttons a minimum width before wrapping */
+    flex: 1;
+    margin-top: 0;
+    padding: 10px; /* Consistent button padding */
+    font-size: 1rem; /* Consistent font size */
+    width: auto;
+    min-width: 120px;
 }
 
 
@@ -232,41 +242,48 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Ensure button doesn't affect cell width more than needed */
     flex-shrink: 0;
+    opacity: 0.7; /* Make delete button slightly less prominent */
+    transition: opacity 0.2s ease;
+}
+.delete-btn:hover {
+    opacity: 1;
 }
 
 
 /* --- Responsive Design Adjustments --- */
 
-/* Styles for screens smaller than 768px (typical tablet breakpoint) */
 @media (max-width: 768px) {
     .container {
-        /* Already handled by base max-width/width */
-        /* width: 95%; */
         padding: 15px;
-         max-height: 98vh; /* Adjust max height slightly */
+         max-height: 98vh;
+         margin: 10px auto; /* Center container with margin */
     }
 
     h2 {
-        font-size: 1.3rem;
+        font-size: 1.4rem; /* Slightly larger than 480px but smaller than desktop */
     }
 
     .balance h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
+     .balance h3 { font-size: 1.1rem; }
 
     .money {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
+     .income h3, .expense h3 { font-size: 1.05rem; }
 
-    /* Form/Chart container is not used in this HTML */
-    /* .form-chart-container { flex-direction: column; gap: 15px; } */
-    /* .form-chart-container form, .chart-container { flex: unset; width: 100%; min-width: unset; } */
+     h3 { /* Adjust general h3 spacing */
+         margin-top: 15px;
+         margin-bottom: 8px;
+         font-size: 1.1rem;
+     }
 
-    /* Adjust table font size and padding */
+
     .transaction-table {
         font-size: 8pt;
+        margin-bottom: 12px; /* Reduced space below table */
     }
 
     .transaction-table th,
@@ -286,59 +303,69 @@ h2 {
     .transaction-table th:nth-child(5),
     .transaction-table td:nth-child(5) { width: 10%; } /* Action */
 
-     /* Button container gap and button padding/font size adjustments */
+
     .button-container {
-         gap: 10px; /* Adjusted gap */
-         /* flex-wrap handles stacking if necessary */
+         gap: 10px;
+         margin-top: 8px; /* Reduced margin top */
      }
      .button-container .btn {
-         padding: 10px; /* Slightly larger padding for buttons */
-         font-size: 1rem; /* Standard font size for buttons */
+         padding: 10px;
+         font-size: 1rem;
      }
+      .formcontrol { margin-bottom: 6px; } /* Reduced space between form controls */
+      .formcontrol label { margin-bottom: 2px; } /* Reduced space below labels */
+
 }
 
 /* Styles for screens smaller than 480px (typical mobile breakpoint) */
 @media (max-width: 480px) {
+    body {
+        padding: 5px; /* Less padding around the body */
+         align-items: stretch; /* Stretch container to fill width */
+    }
     .container {
-        width: 100%; /* Full width on very small screens */
+        width: 100%;
         padding: 10px;
         border-radius: 0;
         box-shadow: none;
-         max-height: 100vh; /* Allow full height on mobile */
+        max-height: 100vh;
+        margin: 0 auto; /* Center container */
     }
 
     h2 {
         font-size: 1.2rem;
+        margin-bottom: 8px;
     }
 
     .balance h1 {
-        font-size: 2rem; /* Keep balance font size */
+        font-size: 2rem;
+        margin-bottom: 8px;
     }
+     .balance h3 { font-size: 1rem; }
 
     .money {
         font-size: 1.1rem;
     }
-
-    /* Stack income/expense vertically */
     .incomeExpense {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px; /* Reduced gap */
+        margin: 0 0 8px 0; /* Reduced margin */
+        padding: 8px 0; /* Reduced padding */
+    }
+    .income, .expense { padding: 4px 0; } /* Reduced padding */
+    .income h3, .expense h3 { font-size: 0.95rem; }
+
+
+    h3 { /* Further adjust general h3 spacing */
+        margin-top: 15px;
+        margin-bottom: 6px; /* Reduced space below h3 */
+        font-size: 1.05rem;
     }
 
-    .income,
-    .expense {
-        padding: 5px 0;
-        border-bottom: 1px solid #eee; /* Add separator */
-    }
 
-    .income:last-child,
-    .expense:last-child {
-        border-bottom: none;
-    }
-
-    /* Adjust table font size and padding */
     .transaction-table {
         font-size: 7pt;
+        margin-bottom: 10px; /* Further reduced space below table */
     }
 
      .transaction-table th,
@@ -361,18 +388,22 @@ h2 {
 
     /* Stack buttons vertically on very small screens */
     .button-container {
-        flex-direction: column; /* Stack buttons */
-        gap: 8px; /* Consistent gap */
+        flex-direction: column;
+        gap: 6px; /* Further reduced gap */
+        margin-top: 6px; /* Further reduced margin top */
     }
 
     .button-container .btn {
-        width: 100%; /* Ensure stacked buttons take full width */
-        flex: none; /* Disable flex growing when stacked */
-        min-width: unset; /* Remove min-width when stacked */
+        width: 100%;
+        flex: none;
+        min-width: unset;
+        padding: 8px; /* Reduced button padding */
+        font-size: 0.95rem; /* Slightly reduced button font size */
+        text-align: center;
     }
 
-     /* Center text on stacked buttons */
-     .button-container .btn {
-         text-align: center;
-     }
+     .formcontrol { margin-bottom: 5px; } /* Further reduced space between form controls */
+     .formcontrol label { margin-bottom: 1px; font-size: 0.85rem; } /* Further reduced space below labels */
+     .formcontrol input { padding: 6px; font-size: 0.9rem; } /* Reduced input padding/font size */
+
 }
