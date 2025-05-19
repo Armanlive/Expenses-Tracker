@@ -1,0 +1,493 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif; /* Reverted font-family for general elements */
+}
+
+body {
+  background-color: #78c1f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    /* Removed font-family and font-size from body */
+}
+.container {
+ background-color: #fff;
+ padding: 20px;
+  width: 400px; /* Keep the container width */
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  /* Add overflow-x to handle potential horizontal overflow */
+  overflow-x: auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.5rem; /* Reverted font size */
+}
+
+.balance {
+  text-align: center;
+  background: #0095dd;
+  color: #f6f8fa;
+  border-radius: 8px;
+  padding-top: 5px;
+}
+
+.balance h1{
+ margin: 0px;
+ font-size: 2.5rem; /* Reverted font size */
+}
+
+.incomeExpense {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0px;
+}
+
+.income,
+.expense{
+    flex: 1;
+    text-align: center;
+}
+
+.money {
+  font-size: 1.5rem; /* Reverted font size */
+  margin: 5px 0px;
+}
+
+.Plus {
+    color: #20cc71;
+    font-weight: bold;
+}
+
+.Minus {
+    color: #C0392B;
+    font-weight: bold;
+}
+
+/* Removed or adjusted styles for the old list */
+/*
+.list {
+  list-style: none;
+  padding: 0px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.list li {
+    background-color: #f6f8fa;
+    margin: 10px 0px;
+    padding: 10px;
+    border-right: 5px solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+*/
+
+/* New styles for the transaction table */
+.transaction-table {
+    width: 100%; /* Make the table take full width of its container */
+    border-collapse: collapse; /* Collapse borders */
+    margin-bottom: 20px; /* Add some space below the table */
+    table-layout: fixed; /* Fix table layout to prevent columns from adjusting based on content */
+    border: 1px solid #333; /* Added light black border to the table */
+    font-family: "Trebuchet MS", sans-serif; /* Set font family for the table */
+    font-size: 9pt; /* Set font size for the table */
+    /* Add max height and scroll for the table body */
+    max-height: 150px; /* Adjust this value as needed to fit your desired number of rows */
+    overflow-y: auto; /* Add vertical scrollbar when content exceeds max-height */
+    display: block; /* Needed for max-height and overflow to work on a table */
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 8px; /* Add padding to cells */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Add a bottom border to cells */
+    /* word-wrap: break-word; /* Break long words to prevent overflow */ /* Removed from th */
+    font-size: 1em; /* Ensure table cell text is based on the table font size */
+}
+
+/* Add display: block to tbody to make overflow work */
+.transaction-table tbody {
+    display: block;
+    max-height: calc(150px - 35px); /* Adjust max-height for tbody, subtracting the estimated header height */
+    overflow-y: auto; /* Add scrollbar to tbody */
+    width: 100%; /* Ensure tbody takes full width */
+}
+
+/* Ensure table header aligns with tbody columns when tbody has scrollbar */
+.transaction-table thead tr {
+    display: table; /* Make thead behave like a table */
+    width: 100%; /* Ensure thead takes full width */
+    table-layout: fixed; /* Match the table layout */
+}
+
+
+.transaction-table td {
+    word-wrap: break-word; /* Keep on td */
+}
+
+.transaction-table th {
+    background-color: #f2f2f2; /* Light grey background for headers */
+    font-weight: bold;
+    white-space: nowrap; /* Prevent text wrapping in headers */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    font-size: 1em; /* Ensure table header text is based on the table font size */
+}
+
+
+.transaction-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Alternate row background color */
+}
+
+.transaction-table tbody tr:hover {
+    background-color: #e9e9e9; /* Highlight row on hover */
+}
+
+/* Style for the "No Transactions" message row */
+.transaction-table tbody tr td[colspan="5"] {
+    text-align: center; /* Center the text */
+    font-style: italic;
+    color: #888;
+    font-size: 1em; /* Ensure "No Transactions" text is based on the table font size */
+}
+
+/* Adjust column widths */
+.transaction-table th:nth-child(1),
+.transaction-table td:nth-child(1) {
+    width: 20%; /* Date column - Adjusted width */
+}
+
+.transaction-table th:nth-child(2),
+.transaction-table td:nth-child(2) {
+    width: 25%; /* Description column - Kept same width */
+}
+
+.transaction-table th:nth-child(3),
+.transaction-table td:nth-child(3) {
+    width: 20%; /* Income column - Kept same width */
+    color: #20cc71; /* Green for income */
+    text-align: right; /* Align income to the right */
+}
+
+.transaction-table th:nth-child(4),
+.transaction-table td:nth-child(4) {
+    width: 25%; /* Expenses column - Increased width */
+    color: #C0392B; /* Red for expense */
+    text-align: right; /* Align expenses to the right */
+}
+
+.transaction-table th:nth-child(5),
+.transaction-table td:nth-child(5) {
+    width: 10%; /* Action column - Kept same width */
+    text-align: center; /* Center the delete button */
+    /* Ensure no text is forced by CSS */
+    content: ""; /* Added to ensure no generated content */
+}
+
+/* New styles for coloring entire rows */
+.transaction-table tbody tr.income-row {
+    color: #20cc71; /* Green color for income rows */
+}
+
+.transaction-table tbody tr.expense-row {
+    color: #C0392B; /* Red color for expense rows */
+}
+
+
+.formcontrol {
+    margin-bottom: 8px; /* Reduced margin bottom */
+}
+
+.formcontrol label {
+    display: block;
+    margin-bottom: 3px; /* Reduced margin bottom */
+    font-size: 0.9rem; /* Reverted font size */
+}
+
+.formcontrol input {
+    width: 100%;
+    padding: 6px; /* Reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem; /* Reverted font size */
+}
+
+.btn {
+    /* Removed width: 100%; from the general .btn rule */
+    padding: 10px;
+    background-color: #0095dd; /* Default color, will be overridden by specific classes */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem; /* Reverted font size */
+    border-radius: 4px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease
+}
+
+.btn:hover {
+    background-color: #007bb5; /* Default hover color */
+}
+
+/* New styles for the button container to make them side-by-side */
+.button-container {
+    display: flex; /* Use flexbox */
+    gap: 8px; /* Reduced gap between buttons */
+    margin-top: 8px; /* Reduced margin top */
+}
+
+.button-container .btn {
+    flex: 1;
+    margin-top: 0;
+    padding: 8px; /* Reduced button padding */
+    font-size: 0.9rem; /* Reduced font size for button text */
+}
+
+
+/* Specific styles for income and expense buttons */
+.income-btn {
+    background-color: darkgreen;
+}
+
+.income-btn:hover {
+    background-color: #006400; /* Darker green on hover */
+}
+
+.expense-btn {
+    background-color: red;
+}
+
+.expense-btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+
+.delete-btn { /* Changed from .delete to .delete-btn to match the button class */
+    width: 20px; /* Adjusted width */
+    height: 20px; /* Adjusted height */
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1em; /* Keep relative to table font size */
+    color: red; /* Ensure the color is red */
+    display: flex; /* Use flexbox to center icon */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Removed or adjusted styles for the old list items */
+/*
+.list li.plus {
+    border-right-color: #20cc71;
+ color: #20cc71;
+}
+
+.list li.minus {
+    border-right-color: #C0392B;
+ color: #C0392B;
+}
+
+.list li span.plus {
+    color: #20cc71;
+}
+
+.list li span.minus {
+    color: #C0392B;
+    margin-left: auto;
+}
+*/
+
+/* Style for the chart container */
+.chart-container {
+    margin-bottom: 20px; /* Add some space below the chart */
+    flex: 1; /* Allow chart container to grow */
+    min-width: 0; /* Prevent flex item from overflowing */
+}
+
+/* New styles to arrange form and chart side-by-side */
+.form-chart-container {
+    display: flex; /* Use flexbox */
+    justify-content: space-between; /* Distribute space between items */
+    gap: 20px; /* Add space between the chart and the form */
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    margin-bottom: 20px; /* Add space below this section */
+}
+
+.form-chart-container form {
+    flex: 1; /* Allow form to grow */
+    min-width: 250px; /* Minimum width for the form before wrapping */
+}
+
+/* Adjust the h3 above the form if needed, or remove it */
+.form-chart-container h3 {
+    width: 100%; /* Make the heading take full width */
+    text-align: center; /* Center the heading */
+    margin-bottom: 10px;
+}
+
+/* --- Responsive Design --- */
+
+/* Styles for screens smaller than 768px (typical tablet breakpoint) */
+@media (max-width: 768px) {
+    .container {
+        width: 95%; /* Make container take more width on smaller screens */
+        padding: 15px; /* Reduce padding */
+    }
+
+    h2 {
+        font-size: 1.3rem; /* Slightly smaller heading */
+    }
+
+    .balance h1 {
+        font-size: 2rem; /* Slightly smaller balance font */
+    }
+
+    .money {
+        font-size: 1.2rem; /* Slightly smaller income/expense font */
+    }
+
+    /* Stack the form and chart vertically on smaller screens */
+    .form-chart-container {
+        flex-direction: column;
+        gap: 15px; /* Adjust gap when stacked */
+    }
+
+    .form-chart-container form,
+    .chart-container {
+        flex: unset; /* Remove flex grow */
+        width: 100%; /* Make them take full width */
+        min-width: unset; /* Remove min-width constraint */
+    }
+
+    /* Adjust table font size for smaller screens */
+    .transaction-table {
+        font-size: 8pt;
+    }
+
+    .transaction-table th,
+    .transaction-table td {
+        padding: 6px; /* Reduce cell padding */
+    }
+
+    /* Adjust column widths for smaller screens if necessary */
+    .transaction-table th:nth-child(1),
+    .transaction-table td:nth-child(1) {
+        width: 20%; /* Date */
+    }
+
+    .transaction-table th:nth-child(2),
+    .transaction-table td:nth-child(2) {
+        width: 30%; /* Description - Give more space */
+    }
+
+    .transaction-table th:nth-child(3),
+    .transaction-table td:nth-child(3) {
+        width: 20%; /* Income */
+    }
+
+    .transaction-table th:nth-child(4),
+    .transaction-table td:nth-child(4) {
+        width: 20%; /* Expenses */
+    }
+
+    .transaction-table th:nth-child(5),
+    .transaction-table td:nth-child(5) {
+        width: 10%; /* Action */
+    }
+}
+
+/* Styles for screens smaller than 480px (typical mobile breakpoint) */
+@media (max-width: 480px) {
+    .container {
+        width: 100%; /* Full width on very small screens */
+        padding: 10px; /* Further reduce padding */
+        border-radius: 0; /* Remove border-radius */
+        box-shadow: none; /* Remove box-shadow */
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .balance h1 {
+        font-size: 2rem;
+    }
+
+    .money {
+        font-size: 1.1rem;
+    }
+
+    .incomeExpense {
+        flex-direction: column; /* Stack income/expense vertically */
+        gap: 10px;
+    }
+
+    .income,
+    .expense {
+        padding: 5px 0;
+        border-bottom: 1px solid #eee; /* Add separator */
+    }
+
+    .income:last-child,
+    .expense:last-child {
+        border-bottom: none;
+    }
+
+    /* Adjust table font size for mobile */
+    .transaction-table {
+        font-size: 7pt;
+    }
+
+     .transaction-table th,
+    .transaction-table td {
+        padding: 4px; /* Further reduce cell padding */
+    }
+
+    /* Adjust column widths for mobile */
+    .transaction-table th:nth-child(1),
+    .transaction-table td:nth-child(1) {
+        width: 20%; /* Date */
+    }
+
+    .transaction-table th:nth-child(2),
+    .transaction-table td:nth-child(2) {
+        width: 35%; /* Description - More space */
+    }
+
+    .transaction-table th:nth-child(3),
+    .transaction-table td:nth-child(3) {
+        width: 18%; /* Income */
+    }
+
+    .transaction-table th:nth-child(4),
+    .transaction-table td:nth-child(4) {
+        width: 18%; /* Expenses */
+    }
+
+    .transaction-table th:nth-child(5),
+    .transaction-table td:nth-child(5) {
+        width: 9%; /* Action */
+    }
+
+    .button-container {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 5px;
+    }
+
+    .button-container .btn {
+        padding: 10px; /* Increase button padding */
+        font-size: 1rem; /* Increase button font size */
+    }
+}
+
