@@ -1,185 +1,312 @@
-const balance = document.getElementById("balance");
-const moneyPlus = document.getElementById("moneyPlus"); // Use your existing IDs
-const moneyMinus = document.getElementById("moneyMinus"); // Use your existing IDs
-const transactionBody = document.getElementById("transactionBody"); // Table tbody
-const form = document.getElementById("form");
-const text = document.getElementById("text");
-const amount = document.getElementById("amount");
-const dateInput = document.getElementById("date"); // Your date input
-const addIncomeBtn = document.getElementById("addIncomeBtn"); // Your income button
-const addExpenseBtn = document.getElementById("addExpenseBtn"); // Your expense button
+    let transactions = [];
+    let editIndex = null;
+    let currentMonth = 'all';
+    let selectedRow = null; // For showing action row
 
-// --- Local Storage Handling ---
+    function saveTransactions() {
+      localStorage.setItem('expense_transactions', JSON.stringify(transactions));
+    }
+    function loadTransactions() {
+      const saved = localStorage.getItem('expense_transactions');
+      transactions = saved ? JSON.parse(saved) : [];
+    }
 
-// Check if there are transactions in local storage
-const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
+    function showMessage(text, type = 'success') {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message show ${type}`;
+      setTimeout(() => {
+        msg.classList.remove('show');
+      }, 1800);
+    }
 
-// Initialize transactions array: load from local storage if available, otherwise start empty
-let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return "";
+      let day = d.getDate().toString().padStart(2, '0');
+      let month = (d.getMonth() + 1).toString().padStart(2, '0');
+      let year = d.getFullYear().toString().slice(-2);
+      return `${day}/${month}/${year}`;
+    }
 
-// Function to save transactions to local storage
-function updateLocalStorage() {
-    localStorage.setItem('transactions', JSON.stringify(transactions));
-    console.log('Transactions saved to Local Storage');
-}
+    function setMaxDate() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const maxDate = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('date').setAttribute('max', maxDate);
+      document.getElementById('date').value = maxDate;
+    }
 
-// --- Transaction Logic ---
+    function getMonths(transactions) {
+      const months = new Set();
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        if (!isNaN(d.getTime())) {
+          months.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+        }
+      });
+      return Array.from(months).sort((a, b) => b.localeCompare(a));
+    }
 
-addIncomeBtn.addEventListener("click", () => addTransaction("income"));
-addExpenseBtn.addEventListener("click", () => addTransaction("expense"));
+    function getMonthLabel(ym) {
+      const [y, m] = ym.split('-');
+      const date = new Date(y, m - 1);
+      return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    }
 
-function generateID() {
-    // Generate a unique ID for each transaction
-    return Math.floor(Math.random() * 100000000);
-}
+    function getFilteredTransactions() {
+      if (currentMonth === 'all') return transactions;
+      return transactions.filter(t => {
+        const d = new Date(t.date);
+        const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        return ym === currentMonth;
+      });
+    }
 
-function addTransaction(type) {
-    const amountValue = parseFloat(amount.value);
-    const dateValue = dateInput.value; // YYYY-MM-DD format from input
+    function updateMonthFilter() {
+      const monthFilter = document.getElementById('monthFilter');
+      const months = getMonths(transactions);
+      let options = `<option value="all">All Months</option>`;
+      months.forEach(m => {
+        options += `<option value="${m}">${getMonthLabel(m)}</option>`;
+      });
+      monthFilter.innerHTML = options;
+      monthFilter.value = currentMonth;
+    }
 
-    // Basic validation
-    if (text.value.trim() === '' || isNaN(amountValue) || amountValue <= 0 || dateValue.trim() === '') {
-        alert('Please enter a description, a positive amount, and a date.');
+    function updateUI() {
+      updateMonthFilter();
+      const filtered = getFilteredTransactions();
+      let balance = 0, income = 0, expense = 0;
+      const tbody = document.getElementById('transaction-tbody');
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" style="color:#777;font-style:italic;">Transaction History data empty</td>`;
+        tbody.appendChild(tr);
+      } else {
+        filtered.forEach((t, i) => {
+          if (t.type === 'income') {
+            income += t.amount;
+            balance += t.amount;
+          } else {
+            expense += t.amount;
+            balance -= t.amount;
+          }
+          const tr = document.createElement('tr');
+          tr.className = "main-row";
+          tr.setAttribute("data-row", i);
+          tr.innerHTML = `
+            <td>${formatDate(t.date)}</td>
+            <td>${t.desc}</td>
+            <td style="color:#0a7a0a;font-weight:700;">${t.type === 'income' ? '₹' + t.amount : ''}</td>
+            <td style="color:#b71c1c;font-weight:700;">${t.type === 'expense' ? '₹' + t.amount : ''}</td>
+          `;
+          tr.addEventListener('click', function(e){
+            if (!e.target.closest('.icon-btn')) {
+              selectedRow = (selectedRow === i) ? null : i;
+              updateUI();
+            }
+          });
+          tbody.appendChild(tr);
+
+          // Show action row if selected
+          if (selectedRow === i) {
+            const actionTr = document.createElement('tr');
+            actionTr.className = "table-action-row";
+            actionTr.innerHTML = `<td colspan="4">
+              <div class="action-btns">
+                <button class="icon-btn edit" title="Edit" onclick="editTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-pencil-square"></i></button>
+                <button class="icon-btn delete" title="Delete" onclick="removeTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>`;
+            tbody.appendChild(actionTr);
+          }
+        });
+      }
+      document.getElementById('balance').textContent = (balance < 0 ? "₹" : "₹") + Math.abs(balance);
+      document.getElementById('income').textContent = "₹" + income;
+      document.getElementById('income').style.color = "#0a7a0a";
+      document.getElementById('expense').textContent = "₹" + expense;
+      document.getElementById('expense').style.color = "#b71c1c";
+      saveTransactions();
+    }
+
+    function addTransaction(type) {
+      const dateInput = document.getElementById('date');
+      const date = dateInput.value;
+      const desc = document.getElementById('desc').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const selectedDate = new Date(date);
+      selectedDate.setHours(0,0,0,0);
+
+      if (!date || !desc || isNaN(amount) || amount <= 0) {
+        showMessage("Please enter valid date, description, and amount.", "error");
         return;
+      }
+      if (selectedDate > today) {
+        showMessage("Future dates are not allowed.", "error");
+        dateInput.value = dateInput.getAttribute('max');
+        return;
+      }
+
+      if (editIndex !== null) {
+        transactions[editIndex] = { date, desc, amount, type };
+        if (type === "income") {
+          showMessage("Edit income Successfully!", "success");
+        } else {
+          showMessage("Edit Expense successfully!", "success");
+        }
+        editIndex = null;
+        document.getElementById('income-btn').textContent = "Income";
+        document.getElementById('expense-btn').textContent = "Expense";
+        document.getElementById('income-btn').classList.remove('active-type');
+        document.getElementById('expense-btn').classList.remove('active-type');
+      } else {
+        transactions.push({ date, desc, amount, type });
+        if (type === "income") {
+          showMessage("Income added Successfully!", "success");
+        } else {
+          showMessage("Expense added Successfully!", "success");
+        }
+      }
+      selectedRow = null;
+      updateUI();
+      document.getElementById('transaction-form').reset();
+      setMaxDate();
     }
 
-    // Determine the final amount (positive for income, negative for expense)
-    const finalAmount = type === "expense" ? -Math.abs(amountValue) : Math.abs(amountValue);
+    document.getElementById('income-btn').addEventListener('click', function() {
+      addTransaction('income');
+      this.classList.add('active-type');
+      document.getElementById('expense-btn').classList.remove('active-type');
+    });
 
-    // Format date for display (DD/MM/YY)
-    const [year, month, day] = dateValue.split('-');
-    const formattedDate = `${day}/${month}/${year.slice(-2)}`;
+    document.getElementById('expense-btn').addEventListener('click', function() {
+      addTransaction('expense');
+      this.classList.add('active-type');
+      document.getElementById('income-btn').classList.remove('active-type');
+    });
 
-    const transaction = {
-        id: generateID(), // Assign a unique ID
-        text: text.value.trim(), // Trim whitespace from description
-        amount: finalAmount,
-        date: formattedDate // Store the formatted date
+    window.editTransaction = function(index) {
+      const t = transactions[index];
+      document.getElementById('date').value = t.date;
+      document.getElementById('desc').value = t.desc;
+      document.getElementById('amount').value = t.amount;
+      editIndex = index;
+      if (t.type === 'income') {
+        document.getElementById('income-btn').classList.add('active-type');
+        document.getElementById('expense-btn').classList.remove('active-type');
+        document.getElementById('income-btn').textContent = "Update Income";
+        document.getElementById('expense-btn').textContent = "Expense";
+      } else {
+        document.getElementById('expense-btn').classList.add('active-type');
+        document.getElementById('income-btn').classList.remove('active-type');
+        document.getElementById('expense-btn').textContent = "Update Expense";
+        document.getElementById('income-btn').textContent = "Income";
+      }
+      selectedRow = null;
+      updateUI();
     };
 
-    // Add the new transaction to the transactions array
-    transactions.push(transaction);
-
-    // --- Save to Local Storage ---
-    updateLocalStorage();
-
-    // Re-render the transaction list and update summaries
-    renderTransactions(); // Use render function
-    updateValues();
-
-    // Clear the form inputs
-    text.value = "";
-    amount.value = "";
-    dateInput.value = "";
-}
-
-// Function to remove a transaction by its ID
-function removeTransaction(id) {
-    // Filter out the transaction with the specified ID
-    transactions = transactions.filter(transaction => transaction.id !== id);
-
-    // --- Update Local Storage ---
-    updateLocalStorage();
-
-    // Re-render the transaction list and update summaries
-    renderTransactions(); // Use render function
-    updateValues();
-}
-
-
-// --- DOM Manipulation and Rendering ---
-
-// Function to add a single transaction row to the table
-function addTransactionDOM(transaction) {
-    const item = document.createElement("tr"); // Create a table row
-    const isExpense = transaction.amount < 0;
-
-    // Optional: Add class for row styling (you can handle this in CSS)
-    // item.classList.add(isExpense ? "expense-row" : "income-row");
-
-    // Format amount for display without the sign in the table cells
-    const formatAmount = (amount) => {
-        const absAmount = Math.abs(amount);
-        // Format with 2 decimal places only if needed, otherwise no decimals
-        return absAmount % 1 === 0 ? absAmount.toFixed(0) : absAmount.toFixed(2);
+    window.removeTransaction = function(index) {
+      transactions.splice(index, 1);
+      showMessage("Delete Successfully!", "success");
+      selectedRow = null;
+      updateUI();
+      if (editIndex === index) {
+        document.getElementById('transaction-form').reset();
+        setMaxDate();
+        editIndex = null;
+        document.getElementById('income-btn').textContent = "Income";
+        document.getElementById('expense-btn').textContent = "Expense";
+        document.getElementById('income-btn').classList.remove('active-type');
+        document.getElementById('expense-btn').classList.remove('active-type');
+      }
     };
 
-    const displayAmount = formatAmount(transaction.amount);
-
-    // Populate the table row with cells (td)
-    item.innerHTML = `
-        <td>${transaction.date}</td>
-        <td>${transaction.text}</td>
-        <td class="plus">${isExpense ? '' : `₹${displayAmount}`}</td>
-        <td class="minus">${isExpense ? `₹${displayAmount}` : ''}</td>
-        <td><button class="delete-btn" onclick="removeTransaction(${transaction.id})"><i class="fas fa-trash-alt"></i></button></td>
-    `;
-
-    // Append the new row to the table body
-    transactionBody.appendChild(item);
-}
-
-// Function to update the balance, income, and expense display
-function updateValues() {
-    const amounts = transactions.map(transaction => transaction.amount);
-
-    const total = amounts.reduce((acc, item) => acc + item, 0);
-    const income = amounts.filter(item => item > 0).reduce((acc, item) => acc + item, 0);
-    const expense = amounts.filter(item => item < 0).reduce((acc, item) => acc + item, 0); // Keep as negative for total, but display absolute
-
-    // Helper to format summary amounts (Balance, Income, Expense totals)
-    const formatSummaryAmount = (amount) => {
-        // Format with 2 decimal places only if needed, otherwise no decimals
-        const absAmount = Math.abs(amount);
-        return absAmount % 1 === 0 ? absAmount.toFixed(0) : absAmount.toFixed(2);
+    document.getElementById('exportCSV').onclick = function(e) {
+      e.preventDefault();
+      const filtered = getFilteredTransactions();
+      if (!filtered.length) {
+        showMessage("Transaction History data empty", "error");
+        return;
+      }
+      let csv = '"Date","Description","Income","Expenses"\n';
+      filtered.forEach(t => {
+        const date = formatDate(t.date);
+        const desc = t.desc.replace(/"/g, '""');
+        const income = t.type === 'income' ? t.amount : '';
+        const expense = t.type === 'expense' ? t.amount : '';
+        csv += `"${date}","${desc}","${income}","${expense}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Transaction_History.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showMessage("CSV file Created successfully!", "success");
     };
 
-    // Update display elements
-    // Ensure total formatting includes sign if needed
-    const formattedTotal = total % 1 === 0 ? total.toFixed(0) : total.toFixed(2);
-    balance.innerText = `₹${formattedTotal}`;
+    document.getElementById('exportPDF').onclick = function(e) {
+      e.preventDefault();
+      const filtered = getFilteredTransactions();
+      if (!filtered.length) {
+        showMessage("Transaction History data empty", "error");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("Transaction History", 14, 18);
+      doc.setFontSize(10);
 
+      const headers = [["Date", "Description", "Income", "Expenses"]];
+      const body = filtered.map(t => [
+        formatDate(t.date),
+        t.desc,
+        t.type === 'income' ? t.amount : '',
+        t.type === 'expense' ? t.amount : ''
+      ]);
 
-    moneyPlus.innerText = `₹+${formatSummaryAmount(income)}`;
-    moneyMinus.innerText = `₹-${formatSummaryAmount(expense)}`; // Display absolute value of expense
+      doc.autoTable({
+        head: headers,
+        body: body,
+        startY: 24,
+        theme: 'striped',
+        styles: { font: 'helvetica', fontSize: 10, cellPadding: 2 },
+        headStyles: { fillColor: [20, 162, 255], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [247, 250, 253] },
+        margin: { left: 10, right: 10 }
+      });
+      doc.save('Transaction_History.pdf');
+      showMessage("PDF file Created successfully!", "success");
+    };
 
-    // Display "No Transactions" message if the list is empty
-    if (transactions.length === 0) {
-        // Check if the "No Transactions" row already exists
-        if (!document.getElementById('noTransactionsRow')) {
-             const noTransRow = document.createElement('tr');
-             noTransRow.id = 'noTransactionsRow'; // Add an ID for easy selection
-             noTransRow.innerHTML = '<td colspan="5" style="text-align: center;">No Transactions</td>';
-             transactionBody.appendChild(noTransRow);
-        }
-    } else {
-        // If there are transactions, remove the "No Transactions" row if it exists
-        const noTransRow = document.getElementById('noTransactionsRow');
-        if (noTransRow) {
-            noTransRow.remove();
-        }
-    }
-}
+    document.getElementById('monthFilter').addEventListener('change', function() {
+      currentMonth = this.value;
+      selectedRow = null;
+      updateUI();
+    });
 
-// Function to clear the table body and render all transactions from the array
-function renderTransactions() {
-    transactionBody.innerHTML = ""; // Clear current table body
+    document.getElementById('exportDropdown').onclick = function(e) {
+      this.classList.toggle('show');
+    };
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('exportDropdown');
+      if (!dropdown.contains(e.target)) dropdown.classList.remove('show');
+    });
 
-    // Add transactions from the array to the DOM
-    transactions.forEach(addTransactionDOM);
-
-    // Note: updateValues is called separately after rendering to handle the "No Transactions" message
-}
-
-
-// --- Initialization ---
-
-// Initialize the app by loading from local storage and rendering
-function init() {
-    console.log('Initializing app and loading from Local Storage...');
-    renderTransactions(); // Render transactions loaded from LS
-    updateValues();       // Update the summary values and "No Transactions" message
-}
-
-// Call the initialization function when the script loads
-init();
+    setMaxDate();
+    loadTransactions();
+    updateUI();
