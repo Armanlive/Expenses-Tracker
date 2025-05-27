@@ -1,4 +1,4 @@
-    let transactions = [];
+let transactions = [];
     let editIndex = null;
     let currentMonth = 'all';
     let selectedRow = null; // For showing action row
