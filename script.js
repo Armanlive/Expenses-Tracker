@@ -75,64 +75,64 @@ let transactions = [];
       monthFilter.innerHTML = options;
       monthFilter.value = currentMonth;
     }
-
     function updateUI() {
-      updateMonthFilter();
-      const filtered = getFilteredTransactions();
-      let balance = 0, income = 0, expense = 0;
-      const tbody = document.getElementById('transaction-tbody');
-      tbody.innerHTML = '';
-      if (filtered.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="4" style="color:#777;font-style:italic;">Transaction History data empty</td>`;
-        tbody.appendChild(tr);
+  updateMonthFilter();
+  const filtered = getFilteredTransactions();
+  let balance = 0, income = 0, expense = 0;
+  const tbody = document.getElementById('transaction-tbody');
+  tbody.innerHTML = '';
+  if (filtered.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" style="color:#777;font-style:italic;">Transaction History data empty</td>`;
+    tbody.appendChild(tr);
+  } else {
+    filtered.forEach((t, i) => {
+      if (t.type === 'income') {
+        income += t.amount;
+        balance += t.amount;
       } else {
-        filtered.forEach((t, i) => {
-          if (t.type === 'income') {
-            income += t.amount;
-            balance += t.amount;
-          } else {
-            expense += t.amount;
-            balance -= t.amount;
-          }
-          const tr = document.createElement('tr');
-          tr.className = "main-row";
-          tr.setAttribute("data-row", i);
-          tr.innerHTML = `
-            <td>${formatDate(t.date)}</td>
-            <td>${t.desc}</td>
-            <td style="color:#0a7a0a;font-weight:700;">${t.type === 'income' ? '₹' + t.amount : ''}</td>
-            <td style="color:#b71c1c;font-weight:700;">${t.type === 'expense' ? '₹' + t.amount : ''}</td>
-          `;
-          tr.addEventListener('click', function(e){
-            if (!e.target.closest('.icon-btn')) {
-              selectedRow = (selectedRow === i) ? null : i;
-              updateUI();
-            }
-          });
-          tbody.appendChild(tr);
-
-          // Show action row if selected
-          if (selectedRow === i) {
-            const actionTr = document.createElement('tr');
-            actionTr.className = "table-action-row";
-            actionTr.innerHTML = `<td colspan="4">
-              <div class="action-btns">
-                <button class="icon-btn edit" title="Edit" onclick="editTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-pencil-square"></i></button>
-                <button class="icon-btn delete" title="Delete" onclick="removeTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-trash"></i></button>
-              </div>
-            </td>`;
-            tbody.appendChild(actionTr);
-          }
-        });
+        expense += t.amount;
+        balance -= t.amount;
       }
-      document.getElementById('balance').textContent = (balance < 0 ? "₹" : "₹") + Math.abs(balance);
-      document.getElementById('income').textContent = "₹" + income;
-      document.getElementById('income').style.color = "#0a7a0a";
-      document.getElementById('expense').textContent = "₹" + expense;
-      document.getElementById('expense').style.color = "#b71c1c";
-      saveTransactions();
-    }
+      const tr = document.createElement('tr');
+      tr.className = "main-row";
+      tr.setAttribute("data-row", i);
+      tr.innerHTML = `
+        <td>${formatDate(t.date)}</td>
+        <td>${t.desc}</td>
+        <td style="color:#0a7a0a;font-weight:700;">${t.type === 'income' ? '₹' + t.amount : ''}</td>
+        <td style="color:#b71c1c;font-weight:700;">${t.type === 'expense' ? '₹' + t.amount : ''}</td>
+      `;
+      tr.addEventListener('click', function(e){
+        if (!e.target.closest('.icon-btn')) {
+          selectedRow = (selectedRow === i) ? null : i;
+          updateUI();
+        }
+      });
+      tbody.appendChild(tr);
+      // Show action row if selected
+      if (selectedRow === i) {
+        const actionTr = document.createElement('tr');
+        actionTr.className = "table-action-row";
+        actionTr.innerHTML = `<td colspan="4">
+          <div class="action-btns">
+            <button class="icon-btn edit" title="Edit" onclick="editTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-pencil-square"></i></button>
+            <button class="icon-btn delete" title="Delete" onclick="removeTransaction(${transactions.indexOf(t)});event.stopPropagation();"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>`;
+        tbody.appendChild(actionTr);
+      }
+    });
+  }
+  // FIXED LINE BELOW:
+  document.getElementById('balance').textContent = (balance < 0 ? "-₹" : "₹") + Math.abs(balance);
+  document.getElementById('income').textContent = "₹" + income;
+  document.getElementById('income').style.color = "#0a7a0a";
+  document.getElementById('expense').textContent = "₹" + expense;
+  document.getElementById('expense').style.color = "#b71c1c";
+  saveTransactions();
+}
+
 
     function addTransaction(type) {
       const dateInput = document.getElementById('date');
